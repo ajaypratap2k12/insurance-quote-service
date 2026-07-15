@@ -16,8 +16,8 @@
         "hitPolicy": "first",
         "inputs": [
           { "id": "i1", "name": "Age", "field": "age" },
-          { "id": "i2", "name": "Annual Income", "field": "income" },
-          { "id": "i3", "name": "Coverage Type", "field": "coverageType" }
+          { "id": "i2", "name": "Vehicle Type", "field": "vehicleType" },
+          { "id": "i3", "name": "Vehicle Value", "field": "vehicleValue" }
         ],
         "outputs": [
           { "id": "o1", "name": "Eligible", "field": "eligible" },
@@ -26,11 +26,11 @@
         ],
         "rules": [
           { "_id": "r1", "i1": "< 18", "i2": "", "i3": "", "o1": "false", "o2": "\"REJECTED\"", "o3": "\"Age must be 18 or older\"" },
-          { "_id": "r2", "i1": ">= 18", "i2": "< 30000", "i3": "", "o1": "false", "o2": "\"REJECTED\"", "o3": "\"Income too low for coverage\"" },
-          { "_id": "r3", "i1": ">= 18", "i2": ">= 30000", "i3": "\"BASIC\"", "o1": "true", "o2": "\"APPROVED\"", "o3": "\"Eligible for basic coverage\"" },
-          { "_id": "r4", "i1": ">= 18", "i2": ">= 50000", "i3": "\"STANDARD\"", "o1": "true", "o2": "\"APPROVED\"", "o3": "\"Eligible for standard coverage\"" },
-          { "_id": "r5", "i1": ">= 18", "i2": ">= 80000", "i3": "\"PREMIUM\"", "o1": "true", "o2": "\"APPROVED\"", "o3": "\"Eligible for premium coverage\"" },
-          { "_id": "r6", "i1": "", "i2": "", "i3": "", "o1": "false", "o2": "\"MANUAL_REVIEW\"", "o3": "\"Requires manual review\"" }
+          { "_id": "r2", "i1": ">= 18", "i2": "\"LUXURY\"", "i3": "< 50000", "o1": "false", "o2": "\"REJECTED\"", "o3": "\"Luxury vehicles under 50k value not covered\"" },
+          { "_id": "r3", "i1": ">= 18", "i2": "\"ECONOMY\"", "i3": "", "o1": "true", "o2": "\"APPROVED\"", "o3": "\"Eligible for economy coverage\"" },
+          { "_id": "r4", "i1": ">= 18", "i2": "\"STANDARD\"", "i3": "", "o1": "true", "o2": "\"APPROVED\"", "o3": "\"Eligible for standard coverage\"" },
+          { "_id": "r5", "i1": ">= 18", "i2": "\"LUXURY\"", "i3": ">= 50000", "o1": "true", "o2": "\"APPROVED\"", "o3": "\"Eligible for luxury coverage\"" },
+          { "_id": "r6", "i1": "", "i2": "", "i3": "", "o1": "false", "o2": "\"MANUAL_REVIEW\"", "o3": "\"Vehicle type not recognized\"" }
         ],
         "passThrough": true,
         "inputField": null,
