@@ -1,0 +1,55 @@
+{
+  "nodes": [
+    {
+      "id": "input",
+      "type": "inputNode",
+      "name": "Input",
+      "position": { "x": 100, "y": 100 },
+      "content": {}
+    },
+    {
+      "id": "discount-table",
+      "type": "decisionTableNode",
+      "name": "Discount Rules",
+      "position": { "x": 400, "y": 100 },
+      "content": {
+        "hitPolicy": "first",
+        "inputs": [
+          { "id": "i1", "name": "Premium Amount", "field": "premium" },
+          { "id": "i2", "name": "Customer Tier", "field": "customerTier" },
+          { "id": "i3", "name": "Years Active", "field": "yearsActive" },
+          { "id": "i4", "name": "Claim Free Years", "field": "claimFree" }
+        ],
+        "outputs": [
+          { "id": "o1", "name": "Discount Percentage", "field": "discountPercentage" },
+          { "id": "o2", "name": "Discount Type", "field": "discountType" },
+          { "id": "o3", "name": "Discount Reason", "field": "discountReason" }
+        ],
+        "rules": [
+          { "_id": "r1", "i1": "> 50000", "i2": "\"GOLD\"", "i3": ">= 5", "i4": ">= 3", "o1": "0.25", "o2": "\"LOYALTY\"", "o3": "\"Gold member loyalty discount + claim free\"" },
+          { "_id": "r2", "i1": "> 50000", "i2": "\"GOLD\"", "i3": "", "i4": "", "o1": "0.20", "o2": "\"LOYALTY\"", "o3": "\"Gold member loyalty discount\"" },
+          { "_id": "r3", "i1": "", "i2": "\"SILVER\"", "i3": ">= 3", "i4": ">= 2", "o1": "0.15", "o2": "\"LOYALTY\"", "o3": "\"Silver member loyalty discount + claim free\"" },
+          { "_id": "r4", "i1": "", "i2": "\"SILVER\"", "i3": "", "i4": "", "o1": "0.10", "o2": "\"LOYALTY\"", "o3": "\"Silver member discount\"" },
+          { "_id": "r5", "i1": "", "i2": "", "i3": "", "i4": ">= 5", "o1": "0.15", "o2": "\"CLAIM_FREE\"", "o3": "\"Claim free discount\"" },
+          { "_id": "r6", "i1": "", "i2": "", "i3": "", "i4": ">= 3", "o1": "0.10", "o2": "\"CLAIM_FREE\"", "o3": "\"Claim free discount\"" },
+          { "_id": "r7", "i1": "", "i2": "", "i3": "", "i4": "", "o1": "0", "o2": "\"NONE\"", "o3": "\"No discount applicable\"" }
+        ],
+        "passThrough": true,
+        "inputField": null,
+        "outputPath": null,
+        "executionMode": "single"
+      }
+    },
+    {
+      "id": "output",
+      "type": "outputNode",
+      "name": "Output",
+      "position": { "x": 700, "y": 100 },
+      "content": {}
+    }
+  ],
+  "edges": [
+    { "id": "edge-1", "sourceId": "input", "targetId": "discount-table", "sourceHandle": null, "type": "edge" },
+    { "id": "edge-2", "sourceId": "discount-table", "targetId": "output", "sourceHandle": null, "type": "edge" }
+  ]
+}

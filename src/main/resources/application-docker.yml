@@ -1,0 +1,18 @@
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+  datasource:
+    url: jdbc:postgresql://postgres:5432/insurance_db?serverTimezone=UTC
+    username: postgres
+    password: postgres
+
+temporal:
+  connection:
+    target: temporal:7233
+
+logging:
+  level:
+    com.example.insurance: INFO
+    io.temporal: INFO

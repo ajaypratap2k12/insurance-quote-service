@@ -1,0 +1,47 @@
+# Development Dynamic Configuration
+# https://docs.temporal.io/concepts/what-is-a-dynamic-config
+
+# History Archival
+system.forceSearchAttributesCacheRefreshOnRead:
+  - value: true
+    constraints: {}
+
+# Workflow Execution Timeout
+limits.defaultWorkflowExecutionTimeout:
+  - value: "3600s"
+    constraints: {}
+
+# Activity Heartbeat Timeout
+limits.defaultActivityHeartbeatTimeout:
+  - value: "30s"
+    constraints: {}
+
+# Workflow Run Timeout
+limits.defaultWorkflowRunTimeout:
+  - value: "3600s"
+    constraints: {}
+
+# Workflow Task Timeout
+limits.defaultWorkflowTaskTimeout:
+  - value: "30s"
+    constraints: {}
+
+# Max Workflow Start to Close Timeout
+limits.maxWorkflowStartToCloseTimeout:
+  - value: "3600s"
+    constraints: {}
+
+# Max Activity Start to Close Timeout
+limits.maxActivityStartToCloseTimeout:
+  - value: "3600s"
+    constraints: {}
+
+# Worker Activities
+worker.enableActivityConstraints:
+  - value: false
+    constraints: {}
+
+# Temporal Server Metrics
+metrics.prometheusListenAddress:
+  - value: "0.0.0.0:8233"
+    constraints: {}

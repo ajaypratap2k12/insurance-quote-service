@@ -1,0 +1,24 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/insurance_db?stringtype=unspecified
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+temporal:
+  connection:
+    target: localhost:7233
+
+logging:
+  level:
+    com.example.insurance: DEBUG
+    io.temporal: DEBUG
+    org.hibernate.SQL: DEBUG

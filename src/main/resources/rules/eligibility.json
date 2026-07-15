@@ -1,0 +1,53 @@
+{
+  "nodes": [
+    {
+      "id": "input",
+      "type": "inputNode",
+      "name": "Input",
+      "position": { "x": 100, "y": 100 },
+      "content": {}
+    },
+    {
+      "id": "eligibility-table",
+      "type": "decisionTableNode",
+      "name": "Eligibility Rules",
+      "position": { "x": 400, "y": 100 },
+      "content": {
+        "hitPolicy": "first",
+        "inputs": [
+          { "id": "i1", "name": "Age", "field": "age" },
+          { "id": "i2", "name": "Annual Income", "field": "income" },
+          { "id": "i3", "name": "Coverage Type", "field": "coverageType" }
+        ],
+        "outputs": [
+          { "id": "o1", "name": "Eligible", "field": "eligible" },
+          { "id": "o2", "name": "Status", "field": "status" },
+          { "id": "o3", "name": "Reason", "field": "reason" }
+        ],
+        "rules": [
+          { "_id": "r1", "i1": "< 18", "i2": "", "i3": "", "o1": "false", "o2": "\"REJECTED\"", "o3": "\"Age must be 18 or older\"" },
+          { "_id": "r2", "i1": ">= 18", "i2": "< 30000", "i3": "", "o1": "false", "o2": "\"REJECTED\"", "o3": "\"Income too low for coverage\"" },
+          { "_id": "r3", "i1": ">= 18", "i2": ">= 30000", "i3": "\"BASIC\"", "o1": "true", "o2": "\"APPROVED\"", "o3": "\"Eligible for basic coverage\"" },
+          { "_id": "r4", "i1": ">= 18", "i2": ">= 50000", "i3": "\"STANDARD\"", "o1": "true", "o2": "\"APPROVED\"", "o3": "\"Eligible for standard coverage\"" },
+          { "_id": "r5", "i1": ">= 18", "i2": ">= 80000", "i3": "\"PREMIUM\"", "o1": "true", "o2": "\"APPROVED\"", "o3": "\"Eligible for premium coverage\"" },
+          { "_id": "r6", "i1": "", "i2": "", "i3": "", "o1": "false", "o2": "\"MANUAL_REVIEW\"", "o3": "\"Requires manual review\"" }
+        ],
+        "passThrough": true,
+        "inputField": null,
+        "outputPath": null,
+        "executionMode": "single"
+      }
+    },
+    {
+      "id": "output",
+      "type": "outputNode",
+      "name": "Output",
+      "position": { "x": 700, "y": 100 },
+      "content": {}
+    }
+  ],
+  "edges": [
+    { "id": "edge-1", "sourceId": "input", "targetId": "eligibility-table", "sourceHandle": null, "type": "edge" },
+    { "id": "edge-2", "sourceId": "eligibility-table", "targetId": "output", "sourceHandle": null, "type": "edge" }
+  ]
+}

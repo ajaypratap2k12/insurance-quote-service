@@ -1,0 +1,84 @@
+services:
+  postgres:
+    image: postgres:18.4
+    container_name: insurance-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: insurance_db
+      TZ: UTC
+      PGTZ: UTC
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - ./docker/postgres/init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - insurance-network
+
+  temporal:
+    image: temporalio/auto-setup:1.26.3
+    container_name: insurance-temporal
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PWD=postgres
+      - POSTGRES_SEEDS=postgres
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+    ports:
+      - "7233:7233"
+      - "8233:8233"
+    volumes:
+      - ./docker/temporal/config/dynamicconfig:/etc/temporal/config/dynamicconfig
+    networks:
+      - insurance-network
+
+  temporal-ui:
+    image: temporalio/ui:2.31.0
+    container_name: insurance-temporal-ui
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+    ports:
+      - "8081:8080"
+    networks:
+      - insurance-network
+
+  insurance-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: insurance-quote-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+      temporal:
+        condition: service_started
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/insurance_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - TEMPORAL_CONNECTION_TARGET=temporal:7233
+    ports:
+      - "8080:8080"
+    networks:
+      - insurance-network
+
+volumes:
+  postgres-data:
+
+networks:
+  insurance-network:
+    driver: bridge

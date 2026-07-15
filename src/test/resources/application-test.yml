@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/insurance_test_db?stringtype=unspecified
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+      default_schema: insurance
+    show-sql: true
+
+temporal:
+  connection:
+    target: localhost:7233
+    namespace: default
+
+gorules:
+  rules:
+    path: classpath:rules
+
+logging:
+  level:
+    root: INFO
+    com.example.insurance: DEBUG

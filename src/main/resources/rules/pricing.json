@@ -1,0 +1,76 @@
+{
+  "nodes": [
+    {
+      "id": "input",
+      "type": "inputNode",
+      "name": "Input",
+      "position": { "x": 100, "y": 100 },
+      "content": {
+        "schema": ""
+      }
+    },
+    {
+      "id": "risk-table",
+      "type": "decisionTableNode",
+      "name": "Risk Assessment",
+      "position": { "x": 400, "y": 100 },
+      "content": {
+        "hitPolicy": "first",
+        "inputs": [
+          { "id": "i1", "name": "Age", "field": "age" },
+          { "id": "i2", "name": "Vehicle Type", "field": "vehicleType" },
+          { "id": "i3", "name": "Vehicle Value", "field": "vehicleValue" },
+          { "id": "i4", "name": "Claim History", "field": "claimHistory" }
+        ],
+        "outputs": [
+          { "id": "o1", "name": "Risk Score", "field": "riskScore" },
+          { "id": "o2", "name": "Risk Category", "field": "riskCategory" },
+          { "id": "o3", "name": "Base Multiplier", "field": "baseMultiplier" }
+        ],
+        "rules": [
+          { "_id": "r1", "i1": "< 25", "i2": "\"SPORTS\"", "i3": "> 50000", "i4": "> 2", "o1": "\"HIGH\"", "o2": "\"HIGH_RISK\"", "o3": "2.5" },
+          { "_id": "r2", "i1": "< 25", "i2": "\"SPORTS\"", "i3": "", "i4": "", "o1": "\"HIGH\"", "o2": "\"HIGH_RISK\"", "o3": "2.0" },
+          { "_id": "r3", "i1": "< 25", "i2": "\"SEDAN\"", "i3": "", "i4": "> 1", "o1": "\"MEDIUM\"", "o2": "\"MEDIUM_RISK\"", "o3": "1.5" },
+          { "_id": "r4", "i1": ">= 25", "i2": "", "i3": "< 30000", "i4": "0", "o1": "\"LOW\"", "o2": "\"LOW_RISK\"", "o3": "0.8" },
+          { "_id": "r5", "i1": ">= 25", "i2": "", "i3": "", "i4": "0", "o1": "\"LOW\"", "o2": "\"STANDARD\"", "o3": "1.0" },
+          { "_id": "r6", "i1": "> 50", "i2": "", "i3": "", "i4": "0", "o1": "\"LOW\"", "o2": "\"LOW_RISK\"", "o3": "0.9" },
+          { "_id": "r7", "i1": "", "i2": "", "i3": "", "i4": "> 2", "o1": "\"HIGH\"", "o2": "\"HIGH_RISK\"", "o3": "2.0" },
+          { "_id": "r8", "i1": "", "i2": "", "i3": "", "i4": "", "o1": "\"MEDIUM\"", "o2": "\"STANDARD\"", "o3": "1.2" }
+        ],
+        "passThrough": true,
+        "inputField": null,
+        "outputPath": null,
+        "executionMode": "single"
+      }
+    },
+    {
+      "id": "premium-calc",
+      "type": "expressionNode",
+      "name": "Calculate Premium",
+      "position": { "x": 700, "y": 100 },
+      "content": {
+        "expressions": [
+          { "id": "e1", "key": "premium", "value": "1000 * baseMultiplier" }
+        ],
+        "passThrough": true,
+        "inputField": null,
+        "outputPath": null,
+        "executionMode": "single"
+      }
+    },
+    {
+      "id": "output",
+      "type": "outputNode",
+      "name": "Output",
+      "position": { "x": 1000, "y": 100 },
+      "content": {
+        "schema": ""
+      }
+    }
+  ],
+  "edges": [
+    { "id": "edge-1", "sourceId": "input", "targetId": "risk-table", "sourceHandle": null, "type": "edge" },
+    { "id": "edge-2", "sourceId": "risk-table", "targetId": "premium-calc", "sourceHandle": null, "type": "edge" },
+    { "id": "edge-3", "sourceId": "premium-calc", "targetId": "output", "sourceHandle": null, "type": "edge" }
+  ]
+}

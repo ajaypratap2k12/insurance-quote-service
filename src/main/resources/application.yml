@@ -1,0 +1,110 @@
+spring:
+  application:
+    name: insurance-quote-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/insurance_db?stringtype=unspecified
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      max-lifetime: 1200000
+      connection-timeout: 20000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+      default_schema: insurance
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        use_sql_comments: false
+        default_batch_fetch_size: 16
+        default_schema: insurance
+
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+  tomcat:
+    max-threads: 200
+    min-spare-threads: 10
+    accept-count: 100
+
+# Temporal Configuration
+temporal:
+  connection:
+    target: localhost:7233
+    namespace: default
+  worker:
+    task-queue: insurance-task-queue
+    workflow-classes:
+      - com.example.insurance.workflow.InsuranceQuoteWorkflowImpl
+    activity-classes:
+      - com.example.insurance.activity.InsuranceQuoteActivitiesImpl
+  metrics:
+    scope:
+      type: prometheus
+      prefix: temporal
+
+# GoRules Configuration
+gorules:
+  rules:
+    path: classpath:rules
+
+# Application-specific configuration
+insurance:
+  rules:
+    engine: gorules
+    rules-path: classpath:rules/
+  workflow:
+    quote-timeout: PT30M
+    max-retry-attempts: 3
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+  health:
+    db:
+      enabled: true
+    temporal:
+      enabled: true
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.example.insurance: INFO
+    io.temporal: INFO
+    io.gorules: INFO
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql: WARN
+  pattern:
+    dateformat: yyyy-MM-dd HH:mm:ss.SSS
+  file:
+    name: logs/insurance-quote-service.log
+
+# SpringDoc/OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
