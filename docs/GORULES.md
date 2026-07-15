@@ -129,6 +129,123 @@ Then open `http://localhost:3000` in your browser.
    - `> 50000` - Greater than 50000
    - `""` - Empty string matches any value
 
+## Testing Rules Outside Application
+
+You can test GoRules decision models without running the Spring Boot application.
+
+### Option 1: GoRules Online Simulator (Easiest)
+
+1. Go to https://editor.gorules.io
+2. Click **Import** → Select `eligibility.json`
+3. Click **Simulator** tab
+4. Enter test input:
+
+```json
+{
+  "age": 20,
+  "vehicleType": "SEDAN",
+  "vehicleValue": 25000,
+  "claimHistory": 0
+}
+```
+
+5. Click **Run** → See result instantly
+6. Modify rules → Run again → Compare results
+
+**Test Cases:**
+
+| Input | Expected Output |
+|-------|-----------------|
+| `age: 16` | REJECTED - Age must be 18 or older |
+| `age: 20` | APPROVED - Eligible for basic coverage |
+| `age: 30, income: 60000` | APPROVED - Eligible for standard coverage |
+| `age: 40, income: 90000` | APPROVED - Eligible for premium coverage |
+
+### Option 2: GoRules BRMS Docker Simulator
+
+```bash
+docker run -d -p 3000:3000 ghcr.io/gorules/brms:latest
+```
+
+Open http://localhost:3000:
+1. Import `eligibility.json`
+2. Open **Simulator** panel (right side)
+3. Test with different inputs
+4. See results in real-time
+
+### Option 3: Java Standalone Test
+
+Create `src/test/java/com/example/insurance/rules/RuleSimulatorTest.java`:
+
+```java
+package com.example.insurance.rules;
+
+import io.gorules.zen_engine.*;
+import org.junit.jupiter.api.Test;
+
+import java.nio.file.*;
+import java.util.Map;
+
+class RuleSimulatorTest {
+
+    @Test
+    void testEligibility() throws Exception {
+        byte[] ruleJson = Files.readAllBytes(
+            Path.of("src/main/resources/rules/eligibility.json"));
+
+        try (var engine = new ZenEngine(null, null)) {
+            var decision = engine.createDecision(new JsonBuffer(ruleJson));
+
+            var input = new JsonBuffer("""
+                { "age": 20, "vehicleType": "SEDAN", "vehicleValue": 25000, "claimHistory": 0 }
+                """);
+
+            var response = decision.evaluate(input, null).join();
+            System.out.println("Result: " + response.result());
+        }
+    }
+
+    @Test
+    void testPricing() throws Exception {
+        byte[] ruleJson = Files.readAllBytes(
+            Path.of("src/main/resources/rules/pricing.json"));
+
+        try (var engine = new ZenEngine(null, null)) {
+            var decision = engine.createDecision(new JsonBuffer(ruleJson));
+
+            var input = new JsonBuffer("""
+                { "age": 30, "vehicleType": "SEDAN", "vehicleValue": 35000, "claimHistory": 0 }
+                """);
+
+            var response = decision.evaluate(input, null).join();
+            System.out.println("Result: " + response.result());
+        }
+    }
+
+    @Test
+    void testDiscount() throws Exception {
+        byte[] ruleJson = Files.readAllBytes(
+            Path.of("src/main/resources/rules/discount.json"));
+
+        try (var engine = new ZenEngine(null, null)) {
+            var decision = engine.createDecision(new JsonBuffer(ruleJson));
+
+            var input = new JsonBuffer("""
+                { "premium": 1000, "customerName": "John", "claimHistory": 0 }
+                """);
+
+            var response = decision.evaluate(input, null).join();
+            System.out.println("Result: " + response.result());
+        }
+    }
+}
+```
+
+Run specific test:
+```bash
+mvn test -Dtest=RuleSimulatorTest#testEligibility
+```
+
 ## Hot Reload
 
 The application uses Java WatchService to monitor the rules directory for changes. When a rule file is modified:
