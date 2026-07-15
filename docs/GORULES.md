@@ -28,9 +28,55 @@ Applies discounts based on:
 - **Years Active**: Longer customers get loyalty discounts
 - **Claim Free Years**: No claims history reduces premium
 
+## Tools to View/Edit Rules
+
+### Option 1: GoRules Cloud (Easiest - No Install)
+
+1. Go to https://editor.gorules.io
+2. Sign up for free account
+3. Create a new project
+4. Import the JSON files from `src/main/resources/rules/`
+5. Edit visually with drag-and-drop
+6. Export and replace the files
+
+**Features:**
+- Visual decision graph editor
+- Spreadsheet-like decision tables
+- Built-in Simulator to test rules
+- No installation required
+
+### Option 2: GoRules BRMS (Self-Hosted)
+
+```bash
+# Run GoRules BRMS with Docker
+docker run -d -p 3000:3000 \
+  --name gorules-brms \
+  ghcr.io/gorules/brms:latest
+```
+
+Then open `http://localhost:3000` in your browser.
+
+**Features:**
+- Full-featured BRMS with team collaboration
+- Version control for rules
+- Audit trail of changes
+- Role-based access control
+
+### Option 3: VS Code Extension
+
+1. Open VS Code
+2. Extensions → Search "JDM Editor"
+3. Install `@gorules/jdm-editor`
+4. Open any `.json` file in `src/main/resources/rules/`
+
+**Features:**
+- Syntax highlighting for JDM files
+- Inline validation
+- Quick edits without leaving IDE
+
 ## Modifying Rules
 
-### Option 1: Using GoRules BRMS UI (Recommended)
+### Using GoRules BRMS UI (Recommended)
 
 1. **Access GoRules BRMS**
    - Deploy GoRules BRMS (see https://gorules.io for deployment options)
@@ -53,7 +99,7 @@ Applies discounts based on:
    - Choose "JSON Decision Model (.json)"
    - Save the file back to `src/main/resources/rules/`
 
-### Option 2: Direct JSON Editing
+### Direct JSON Editing
 
 1. **Edit the JSON file directly**
    - Open the rule file (e.g., `eligibility.json`)
@@ -209,6 +255,8 @@ curl -X POST http://localhost:8080/api/v1/quotes \
 ## Resources
 
 - [GoRules Documentation](https://docs.gorules.io)
+- [GoRules Online Editor](https://editor.gorules.io)
+- [GoRules BRMS Docker](https://github.com/gorules/brms)
 - [Java SDK Reference](https://docs.gorules.io/developers/sdks/java)
 - [JDM Standard](https://docs.gorules.io/developers/jdm/standard)
 - [Decision Tables](https://docs.gorules.io/learn/authoring/decision-tables)
